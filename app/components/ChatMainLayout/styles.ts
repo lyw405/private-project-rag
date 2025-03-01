@@ -3,12 +3,13 @@ import { useEmotionCss } from '@ant-design/use-emotion-css';
 export const useStyles = () => {
   const dropdownClassName = useEmotionCss(() => ({
     '.ant-dropdown-menu': {
-      backgroundColor: '#242424 !important'
+      backgroundColor: '#ffffff !important',
+      boxShadow: '0 2px 8px rgba(0, 0, 0, 0.15) !important'
     },
     '.ant-dropdown-menu-item': {
-      color: '#e6e6e6 !important',
+      color: '#333333 !important',
       '&:hover': {
-        backgroundColor: '#333 !important'
+        backgroundColor: '#f5f5f5 !important'
       }
     }
   }));

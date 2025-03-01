@@ -22,6 +22,7 @@ const OpenaiSdk = dynamic(() => import('./pages/openai-sdk'), {
 
 const projectItems = [
   { label: 'das-component', key: 'das-component' },
+  { label: 'vue-component', key: 'vue-component' },
 ];
 
 const Home = () => {
