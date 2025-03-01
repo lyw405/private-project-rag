@@ -20,6 +20,7 @@
     "@emotion/css": "^11.13.4",
     "@emotion/react": "^11.13.3",
     "@emotion/styled": "^11.13.0",
+    "@t3-oss/env-nextjs": "^0.12.0",
     "@tldraw/tldraw": "2.0.0-alpha.17",
     "antd": "^5.21.5",
     "canvas-size": "^1.2.6",
@@ -37,7 +38,8 @@
     "remark-breaks": "^3.0.3",
     "remark-gfm": "^3.0.1",
     "remark-math": "^5.1.1",
-    "styled-components": "^6.1.13"
+    "styled-components": "^6.1.13",
+    "zod": "^3.24.2"
   },
   "devDependencies": {
     "@chromatic-com/storybook": "^1.9.0",
