@@ -15,7 +15,6 @@ export async function createEmbeddings(embeddings: EmbeddingInput[]) {
       embedding: embedding.embedding,
     }));
 
-    // @ts-expect-error: Temporary ignore type mismatch due to drizzle-orm type system complexity
     await db.insert(openAiEmbeddings).values(embeddingsWithId);
     
     return '数据向量化完成！';

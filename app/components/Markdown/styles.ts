@@ -3,18 +3,18 @@ import { useEmotionCss } from '@ant-design/use-emotion-css';
 export const useClassName = () => {
   const className = useEmotionCss(() => {
     return {
-      color: 'rgba(255, 255, 255, 0.8)',
+      color: 'rgba(0, 0, 0, 0.85)',
       '.waitingAnimation > :last-child::after': {
         display: 'inline-block',
         content: '""',
         width: '2px',
         height: '14px',
         transform: 'translate(4px, 2px) scaleY(1.3)',
-        backgroundColor: 'rgba(255, 255, 255, 0.8)',
+        backgroundColor: 'rgba(0, 0, 0, 0.85)',
         animation: 'blink 0.6s infinite'
       },
       '.waitingAnimation > pre:last-child::after': {
-        backgroundColor: '#fff'
+        backgroundColor: '#000'
       },
       '.animation': {
         height: '20px',
@@ -124,7 +124,7 @@ export const useClassName = () => {
       },
       '.markdown ul,.markdown ol': {
         paddingLeft: '2em',
-        color: 'rgba(255, 255, 255, 0.8)'
+        color: 'rgba(0, 0, 0, 0.85)'
       },
       '.markdown ul.no-list,.markdown ol.no-list': {
         listStyleType: 'none',
@@ -300,7 +300,7 @@ export const useClassName = () => {
         tabSize: '4',
         wordSpacing: 'normal',
         width: '100%',
-        color: 'rgba(255, 255, 255, 0.8)',
+        color: 'rgba(0, 0, 0, 0.85)',
 
         '*': {
           wordBreak: 'break-word'
@@ -331,7 +331,7 @@ export const useClassName = () => {
         table: {
           borderCollapse: 'separate',
           borderSpacing: 0,
-          color: 'rgba(255, 255, 255, 0.8)',
+          color: 'rgba(0, 0, 0, 0.85)',
 
           'thead tr:first-child th': {
             borderBottomWidth: '1px',
@@ -391,9 +391,9 @@ export const useClassName = () => {
           paddingLeft: '2em',
           '& li': {
             display: 'list-item',
-            color: 'rgba(255, 255, 255, 0.8)',
+            color: 'rgba(0, 0, 0, 0.85)',
             '& > *': {
-              color: 'rgba(255, 255, 255, 0.8)'
+              color: 'rgba(0, 0, 0, 0.85)'
             }
           }
         },
@@ -403,9 +403,9 @@ export const useClassName = () => {
           paddingLeft: '2em',
           '& li': {
             display: 'list-item',
-            color: 'rgba(255, 255, 255, 0.8)',
+            color: 'rgba(0, 0, 0, 0.85)',
             '& > *': {
-              color: 'rgba(255, 255, 255, 0.8)'
+              color: 'rgba(0, 0, 0, 0.85)'
             }
           }
         }

@@ -54,17 +54,17 @@ const Markdown: React.FC<MarkdownProps> = ({ source, isChatting = false, isStrea
       p: (pProps: ParagraphProps) => <p {...pProps} dir="auto" />,
       code: (props: CodeProps) => <Code {...props} />,
       ul: ({ children, ...props }: ParagraphProps) => (
-        <ul {...props} style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+        <ul {...props} style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
           {children}
         </ul>
       ),
       ol: ({ children, ...props }: ParagraphProps) => (
-        <ol {...props} style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+        <ol {...props} style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
           {children}
         </ol>
       ),
       li: ({ children, ...props }: ParagraphProps) => (
-        <li {...props} style={{ color: 'rgba(255, 255, 255, 0.8)' }}>
+        <li {...props} style={{ color: 'rgba(0, 0, 0, 0.85)' }}>
           {children}
         </li>
       )
