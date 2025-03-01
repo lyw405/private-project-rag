@@ -10,7 +10,8 @@
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "db:migrate": "drizzle-kit migrate",
+    "embed:docs": "tsx app/api/openai/embedDocs.ts"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.1",
@@ -66,6 +67,7 @@
     "postcss": "^8",
     "storybook": "^8.3.6",
     "tailwindcss": "^3.4.1",
+    "tsx": "^4.19.3",
     "typescript": "^5"
   }
 }

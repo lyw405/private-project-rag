@@ -26,7 +26,7 @@ export async function createEmbedding(
     const embeddings = await Promise.all(
       chunks.map(async (chunk) => {
         const response = await openai.embeddings.create({
-          model: "text-embedding-ada-002",
+          model: env.EMBEDDING,
           input: chunk,
         });
 
