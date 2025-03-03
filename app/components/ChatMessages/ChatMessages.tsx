@@ -64,7 +64,7 @@ const ChatMessages = forwardRef<{ scrollToBottom: () => void }, ChatMessagesProp
                     handleInputChange({ target: { value: val } } as unknown as ChangeEvent<HTMLInputElement>);
                   }}
                   handleInputChange={(e) => handleInputChange(e as unknown as ChangeEvent<HTMLInputElement>)}
-                  prompts={['帮我生成一个二维码组件', '帮我画',]}
+                  prompts={['使用代码完成如图组件', '帮我画',]}
                   actions={useMemo(
                     () => [
                       <div className="flex items-center" key="draw a ui">
