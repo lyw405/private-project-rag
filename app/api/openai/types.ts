@@ -1,9 +1,7 @@
-export type CustomChatMessage = {
-  role: 'system' | 'user' | 'assistant';
-  content: string;
-};
+import { ChatCompletionMessageParam } from "openai/resources/chat/completions.mjs";
+
 
 export type OpenAIRequest = {
-  message: CustomChatMessage[];
+  message: ChatCompletionMessageParam[];
 };
   

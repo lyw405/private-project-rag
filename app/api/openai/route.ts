@@ -2,7 +2,8 @@ import OpenAI from 'openai';
 import { env } from '@/lib/env.mjs';
 import { getSystemPrompt } from '@/lib/prompt';
 import { retrieveEmbedding } from './embedding';
-import { OpenAIRequest, CustomChatMessage } from './types';
+import { OpenAIRequest } from './types';
+import { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
 
 const openai = new OpenAI({
   apiKey: env.AI_KEY,
@@ -27,7 +28,7 @@ export async function POST(req: Request) {
     }
 
     // 使用向量检索查找相关内容
-    const similarResults = await retrieveEmbedding(userMessage.content);
+    const similarResults = await retrieveEmbedding(userMessage.content as string);
     
     const reference = similarResults
       .map(result => `${result.content}\n相似度：${(result.similarity * 100).toFixed(2)}%`)
@@ -37,7 +38,7 @@ export async function POST(req: Request) {
     const systemMessage = getSystemPrompt(reference);
 
     // 创建完整的消息数组
-    const messages: CustomChatMessage[] = [
+    const messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: systemMessage },
       ...message,
     ];
