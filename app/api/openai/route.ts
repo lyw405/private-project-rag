@@ -10,8 +10,6 @@ const openai = new OpenAI({
   baseURL: env.AI_BASE_URL,
 });
 
-export const runtime = 'edge';
-
 export async function POST(req: Request) {
   try {
     const { message } = (await req.json()) as OpenAIRequest;
@@ -60,7 +58,7 @@ export async function POST(req: Request) {
           if (content) {
             const data = JSON.stringify({
               content,
-              references: relevantContent
+              references: reference
             });
             controller.enqueue(`data: ${data}\n\n`);
           }
