@@ -9,10 +9,17 @@ export interface SimilarContentResult {
   similarity: number;
 }
 
+export interface SearchConfig {
+  threshold?: number;  // 相似度阈值
+  limit?: number;      // 召回数量
+}
+
 export async function findSimilarContent(
-  embedding: number[]
+  embedding: number[],
+  config?: SearchConfig
 ): Promise<SimilarContentResult[]> {
-  // console.log('embedding', embedding);
+  const { threshold = 0.5, limit = 4 } = config || {};
+  
   const embeddingStr = `[${embedding.join(',')}]`;
   const similarityExpr = sql<number>`(1 - ('${sql.raw(embeddingStr)}'::vector <=> ${openAiEmbeddings.embedding}))::float`;
   const results = await db
@@ -22,9 +29,9 @@ export async function findSimilarContent(
       similarity: similarityExpr
     })
     .from(openAiEmbeddings)
-    .where(sql`${similarityExpr} >= 0.5`)
+    .where(sql`${similarityExpr} >= ${threshold}`)
     .orderBy(sql`${similarityExpr} DESC`)
-    .limit(4);
+    .limit(limit);
 
   return results.map(row => ({
     id: row.id,
