@@ -25,8 +25,13 @@ export async function POST(req: Request) {
       return new Response('No valid user message found', { status: 400 });
     }
 
+    const lastMessageContentString =
+    Array.isArray(userMessage.content) && userMessage.content.length > 0
+      ? userMessage.content.map((c) => (c.type === 'text' ? c.text : '')).join('')
+      : (userMessage.content as string);
+
     // 使用向量检索查找相关内容
-    const similarResults = await retrieveEmbedding(userMessage.content as string);
+    const similarResults = await retrieveEmbedding(lastMessageContentString);
     
     const reference = similarResults
       .map(result => `${result.content}\n相似度：${(result.similarity * 100).toFixed(2)}%`)

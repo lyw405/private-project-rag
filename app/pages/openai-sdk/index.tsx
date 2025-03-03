@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
+import { nanoid } from 'nanoid';
 import ChatMessages from '@/app/components/ChatMessages/ChatMessages';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
 
@@ -15,18 +15,8 @@ const Home = () => {
     setInput(e.target.value);
   };
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (!input.trim() && !messageImgUrl) return;
-
-    const userMessage = {
-      role: 'user' as const,
-      content: input,
-      id: uuidv4(),
-    };
-
-    setMessages((prev) => [...prev, userMessage]);
-    setInput('');
+  const handleSubmitMessage = async (newMessages: Message[]) => {
+    setMessages(newMessages);
     setIsLoading(true);
 
     try {
@@ -36,7 +26,7 @@ const Home = () => {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          message: [...messages, userMessage],
+          message: newMessages,
         }),
       });
 
@@ -51,10 +41,11 @@ const Home = () => {
       let assistantMessage = {
         role: 'assistant' as const,
         content: '',
-        id: uuidv4(),
+        id: nanoid(),
       };
-
-      setMessages((prev) => [...prev, assistantMessage]);
+      
+      // 先将空的 assistant 消息添加到列表中
+      setMessages(prev => [...prev, assistantMessage]);
 
       while (true) {
         const { done, value } = await reader.read();
@@ -110,6 +101,20 @@ const Home = () => {
       setInput(message.content as string);
     }
   };
+
+  const handleSubmit = () => {
+    handleSubmitMessage([...messages, {
+      id: nanoid(),
+      role: 'user',
+      content: messageImgUrl
+        ? [
+            { type: 'image_url', image_url: { url: messageImgUrl } },
+            { type: 'text', text: input }
+          ]
+        : input }]);
+  };
+
+  console.log('messages', messages);
 
   return (
     <ChatMessages
