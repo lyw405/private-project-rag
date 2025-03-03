@@ -51,18 +51,30 @@ export async function POST(req: Request) {
       stream: true,
     });
 
-    // 创建 TransformStream 来处理响应
-    const transformStream = new TransformStream({
-      async transform(chunk, controller) {
-        const text = chunk.choices[0]?.delta?.content || '';
-        if (text) {
-          controller.enqueue(`data: ${JSON.stringify({ text })}\n\n`);
+   // 创建 SSE 流
+   const stream = new ReadableStream({
+    async start(controller) {
+      try {
+        for await (const chunk of response) {
+          const content = chunk.choices[0]?.delta?.content || '';
+          if (content) {
+            const data = JSON.stringify({
+              content,
+              references: relevantContent
+            });
+            controller.enqueue(`data: ${data}\n\n`);
+          }
         }
+        controller.enqueue('data: [DONE]\n\n');
+        controller.close();
+      } catch (error) {
+        controller.error(error);
       }
-    });
+    }
+  });
 
     return new Response(
-      response.toReadableStream().pipeThrough(transformStream),
+        stream,
       {
         headers: {
           'Content-Type': 'text/event-stream',
