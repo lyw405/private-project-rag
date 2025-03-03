@@ -33,7 +33,7 @@ const Home = () => {
       if (!response.ok) {
         throw new Error('API request failed');
       }
-
+      setInput('');
       const reader = response.body?.getReader();
       if (!reader) return;
 
