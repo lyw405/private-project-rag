@@ -58,7 +58,7 @@ export async function POST(req: Request) {
           if (content) {
             const data = JSON.stringify({
               content,
-              references: reference
+              references: similarResults
             });
             controller.enqueue(`data: ${data}\n\n`);
           }
