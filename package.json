@@ -23,6 +23,7 @@
     "@emotion/styled": "^11.13.0",
     "@t3-oss/env-nextjs": "^0.12.0",
     "@tldraw/tldraw": "2.0.0-alpha.17",
+    "ai": "^4.1.47",
     "antd": "^5.21.5",
     "canvas-size": "^1.2.6",
     "drizzle-kit": "^0.30.5",
