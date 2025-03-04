@@ -99,17 +99,10 @@ const Home = ({selectedProject}:{selectedProject:string}) => {
   };
 
   const handleRetry = (messageId: string) => {
-    const messageIndex = messages.findIndex((msg) => msg.id === messageId);
-    if (messageIndex === -1) return;
-
-    // 移除从这条消息开始的所有消息
-    const newMessages = messages.slice(0, messageIndex);
-    setMessages(newMessages);
-
-    // 如果是用户消息，重新发送
-    const message = messages[messageIndex];
-    if (message.role === 'user') {
-      setInput(message.content as string);
+    const index = messages.findIndex((message) => message.id === messageId);
+    if (index > 0) {
+      const previousMessages = messages.slice(0, index);
+      handleSubmitMessage(previousMessages as Message[]);
     }
   };
 
