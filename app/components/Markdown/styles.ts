@@ -270,7 +270,6 @@ export const useClassName = () => {
       },
       '.markdown code,.markdown tt': {
         border: '1px solid #333',
-        backgroundColor: '#1e1e1e',
         borderRadius: '3px',
         margin: '0 2px',
         padding: '0 5px'
