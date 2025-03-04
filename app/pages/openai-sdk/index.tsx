@@ -58,36 +58,42 @@ const Home = ({selectedProject}:{selectedProject:string}) => {
       // 先将空的 assistant 消息添加到列表中
       setMessages(prev => [...prev, assistantMessage]);
 
+      let buffer = '';
+      const sseDataRegex = /data: (.*?)\n\n/g;
+
       while (true) {
         const { done, value } = await reader.read();
         if (done) break;
 
         const chunk = decoder.decode(value);
-        const lines = chunk.split('\n');
+        buffer += chunk;
 
-        for (const line of lines) {
-          if (line.startsWith('data: ')) {
-            const data = line.slice(6);
-            if (data === '[DONE]') continue;
+        // 使用正则表达式匹配完整的 SSE 消息
+        let match;
+        while ((match = sseDataRegex.exec(buffer)) !== null) {
+          const data = match[1];
+          if (data === '[DONE]') continue;
 
-            try {
-              const { content, references: ragDocs } = JSON.parse(data);
-              assistantMessage = {
-                ...assistantMessage,
-                content: assistantMessage.content + content,
-                ragDocs,
-              };
+          try {
+            const { content, references: ragDocs } = JSON.parse(data);
+            assistantMessage = {
+              ...assistantMessage,
+              content: assistantMessage.content + content,
+              ragDocs,
+            };
 
-              setMessages((prev) =>
-                prev.map((msg) =>
-                  msg.id === assistantMessage.id ? assistantMessage : msg
-                )
-              );
-            } catch (e) {
-              console.error('Error parsing SSE message:', e);
-            }
+            setMessages((prev) =>
+              prev.map((msg) =>
+                msg.id === assistantMessage.id ? assistantMessage : msg
+              )
+            );
+          } catch (e) {
+            console.error('Error parsing SSE message:', e);
           }
         }
+
+        // 清理已处理的数据
+        buffer = buffer.slice(buffer.lastIndexOf('\n\n') + 2);
       }
     } catch (error) {
       console.error('Error:', error);
