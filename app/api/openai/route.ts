@@ -7,43 +7,41 @@ import { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mj
 
 const openai = new OpenAI({
   apiKey: env.AI_KEY,
-  baseURL: env.AI_BASE_URL,
+  baseURL: env.AI_BASE_URL
 });
 
 export async function POST(req: Request) {
   try {
-    const { message } = (await req.json()) as OpenAIRequest;
-    
+    const { message, project } = (await req.json()) as OpenAIRequest;
+
     // 获取最后一条用户消息
     let userMessage = message[message.length - 1];
     if (userMessage?.role !== 'user') {
       // 如果最后一条不是用户消息，尝试获取倒数第二条
       userMessage = message[message.length - 2];
     }
-    
+
     if (!userMessage || userMessage.role !== 'user') {
       return new Response('No valid user message found', { status: 400 });
     }
 
     const lastMessageContentString =
-    Array.isArray(userMessage.content) && userMessage.content.length > 0
-      ? userMessage.content.map((c) => (c.type === 'text' ? c.text : '')).join('')
-      : (userMessage.content as string);
+      Array.isArray(userMessage.content) && userMessage.content.length > 0
+        ? userMessage.content.map((c) => (c.type === 'text' ? c.text : '')).join('')
+        : (userMessage.content as string);
 
     // 使用向量检索查找相关内容
-    const similarResults = await retrieveEmbedding(lastMessageContentString);
-    
+    const similarResults = await retrieveEmbedding(lastMessageContentString, { project });
     const reference = similarResults
-      .map(result => `${result.content}\n相似度：${(result.similarity * 100).toFixed(2)}%`)
+      .map((result) => `${result.content}\n相似度：${(result.similarity * 100).toFixed(2)}%`)
       .join('\n\n');
 
     // 构建系统提示词
-    const systemMessage = getSystemPrompt(reference);
-
+    const systemMessage = getSystemPrompt(project, reference);
     // 创建完整的消息数组
     const messages: ChatCompletionMessageParam[] = [
       { role: 'system', content: systemMessage },
-      ...message,
+      ...message
     ];
 
     // 创建流式补全
@@ -51,41 +49,38 @@ export async function POST(req: Request) {
       model: env.MODEL,
       messages,
       temperature: 0.7,
-      stream: true,
+      stream: true
     });
 
-   // 创建 SSE 流
-   const stream = new ReadableStream({
-    async start(controller) {
-      try {
-        for await (const chunk of response) {
-          const content = chunk.choices[0]?.delta?.content || '';
-          if (content) {
-            const data = JSON.stringify({
-              content,
-              references: similarResults
-            });
-            controller.enqueue(`data: ${data}\n\n`);
+    // 创建 SSE 流
+    const stream = new ReadableStream({
+      async start(controller) {
+        try {
+          for await (const chunk of response) {
+            const content = chunk.choices[0]?.delta?.content || '';
+            if (content) {
+              const data = JSON.stringify({
+                content,
+                references: similarResults
+              });
+              controller.enqueue(`data: ${data}\n\n`);
+            }
           }
+          controller.enqueue('data: [DONE]\n\n');
+          controller.close();
+        } catch (error) {
+          controller.error(error);
         }
-        controller.enqueue('data: [DONE]\n\n');
-        controller.close();
-      } catch (error) {
-        controller.error(error);
       }
-    }
-  });
+    });
 
-    return new Response(
-        stream,
-      {
-        headers: {
-          'Content-Type': 'text/event-stream',
-          'Cache-Control': 'no-cache',
-          'Connection': 'keep-alive',
-        },
+    return new Response(stream, {
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive'
       }
-    );
+    });
   } catch (error) {
     console.error('Chat API Error:', error);
     return new Response('Internal Server Error', { status: 500 });

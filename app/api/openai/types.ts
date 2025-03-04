@@ -3,5 +3,6 @@ import { ChatCompletionMessageParam } from "openai/resources/chat/completions.mj
 
 export type OpenAIRequest = {
   message: ChatCompletionMessageParam[];
+  project: string;
 };
   

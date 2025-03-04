@@ -1,5 +1,5 @@
-import { db } from './index';
-import { openAiEmbeddings } from './schema';
+import { db } from '../index';
+import { aasCompsEmbeddings } from './schema';
 import { nanoid } from 'nanoid';
 
 type EmbeddingInput = {
@@ -15,7 +15,7 @@ export async function createEmbeddings(embeddings: EmbeddingInput[]) {
       embedding: embedding.embedding,
     }));
 
-    await db.insert(openAiEmbeddings).values(embeddingsWithId);
+    await db.insert(aasCompsEmbeddings).values(embeddingsWithId);
     
     return '数据向量化完成！';
   } catch (error) {

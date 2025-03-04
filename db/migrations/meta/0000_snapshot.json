@@ -1,11 +1,11 @@
 {
-  "id": "126e4171-5ab2-467f-97fc-5cca50bd4cb8",
+  "id": "aef2210a-5096-4f52-a1cb-5cd2706eaa06",
   "prevId": "00000000-0000-0000-0000-000000000000",
   "version": "7",
   "dialect": "postgresql",
   "tables": {
-    "public.open_ai_embeddings": {
-      "name": "open_ai_embeddings",
+    "public.aas_comps_embeddings": {
+      "name": "aas_comps_embeddings",
       "schema": "",
       "columns": {
         "id": {
@@ -28,8 +28,56 @@
         }
       },
       "indexes": {
-        "openai_embedding_index": {
-          "name": "openai_embedding_index",
+        "aas_comps_embedding_index": {
+          "name": "aas_comps_embedding_index",
+          "columns": [
+            {
+              "expression": "embedding",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last",
+              "opclass": "vector_cosine_ops"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "hnsw",
+          "with": {}
+        }
+      },
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.das_comps_embeddings": {
+      "name": "das_comps_embeddings",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "varchar(191)",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "content": {
+          "name": "content",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "embedding": {
+          "name": "embedding",
+          "type": "vector(1536)",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "das_comps_embedding_index": {
+          "name": "das_comps_embedding_index",
           "columns": [
             {
               "expression": "embedding",

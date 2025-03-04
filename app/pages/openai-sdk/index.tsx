@@ -1,22 +1,31 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { nanoid } from 'nanoid';
 import ChatMessages from '@/app/components/ChatMessages/ChatMessages';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
+import { Message } from '@/app/components/ChatMessages/interface';
 
-const Home = () => {
+const Home = ({selectedProject}:{selectedProject:string}) => {
   const [messages, setMessages] = useState<Array<ChatCompletionMessageParam & { id: string }>>([]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [messageImgUrl, setMessageImgUrl] = useState('');
+  const myRef = useRef(selectedProject);
+
+  useEffect(() => {
+    if (myRef.current !== selectedProject) {
+      myRef.current = selectedProject;
+      setMessages([]);
+    }
+  }, [selectedProject]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
 
   const handleSubmitMessage = async (newMessages: Message[]) => {
-    setMessages(newMessages);
+    setMessages(newMessages as Array<ChatCompletionMessageParam & { id: string }>);
     setIsLoading(true);
 
     try {
@@ -27,6 +36,7 @@ const Home = () => {
         },
         body: JSON.stringify({
           message: newMessages,
+          project: myRef.current,
         }),
       });
 
@@ -42,6 +52,7 @@ const Home = () => {
         role: 'assistant' as const,
         content: '',
         id: nanoid(),
+        ragDocs: [],
       };
       
       // 先将空的 assistant 消息添加到列表中
@@ -60,11 +71,11 @@ const Home = () => {
             if (data === '[DONE]') continue;
 
             try {
-              const { content, references } = JSON.parse(data);
+              const { content, references: ragDocs } = JSON.parse(data);
               assistantMessage = {
                 ...assistantMessage,
                 content: assistantMessage.content + content,
-                ragDocs: references,
+                ragDocs,
               };
 
               setMessages((prev) =>
@@ -111,14 +122,12 @@ const Home = () => {
             { type: 'image_url', image_url: { url: messageImgUrl } },
             { type: 'text', text: input }
           ]
-        : input }]);
+        : input }] as Message[]);
   };
-
-  console.log('messages', messages);
 
   return (
     <ChatMessages
-      messages={messages}
+      messages={messages as Message[]}
       input={input}
       handleInputChange={handleInputChange}
       onSubmit={handleSubmit}

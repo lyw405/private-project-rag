@@ -38,7 +38,7 @@ const ChatMainLayout: React.FC<ChatMainLayoutProps> = ({
               items: projectItems,
               onClick: ({ key }) => {
                 const selectedItem = projectItems.find((item) => item.key === key);
-                onProjectChange(selectedItem?.key || 'das-component');
+                onProjectChange(selectedItem?.key || 'dasComps');
               }
             }}
             dropdownRender={(menu) => (

@@ -1,10 +1,10 @@
 import OpenAI from 'openai';
 import { env } from '@/lib/env.mjs';
-import { SimilarContentResult, findSimilarContent, SearchConfig } from '@/db/selector';
-
+import { SimilarContentResult, findSimilarContent as dasFindSimilarContent, SearchConfig } from '@/db/dasComps/selector';
+import { findSimilarContent as aasFindSimilarContent } from '@/db/aasComps/selector';
 const open_ai_embeddings = new OpenAI({
   apiKey: env.AI_KEY,
-  baseURL: env.AI_BASE_URL,
+  baseURL: env.AI_BASE_URL
 });
 
 export interface EmbeddingResult {
@@ -20,20 +20,20 @@ export async function createEmbedding(
     // 分割文本
     const chunks = text
       .split(delimiter)
-      .filter(chunk => chunk.trim().length > 0)
-      .map(chunk => chunk.trim());
+      .filter((chunk) => chunk.trim().length > 0)
+      .map((chunk) => chunk.trim());
 
     // 批量处理嵌入
     const embeddings = await Promise.all(
       chunks.map(async (chunk) => {
         const response = await open_ai_embeddings.embeddings.create({
           model: env.EMBEDDING,
-          input: chunk,
+          input: chunk
         });
 
         return {
           content: chunk,
-          embedding: response.data[0].embedding,
+          embedding: response.data[0].embedding
         };
       })
     );
@@ -50,7 +50,7 @@ export async function createSingleEmbedding(text: string): Promise<number[]> {
   const response = await open_ai_embeddings.embeddings.create({
     model: env.EMBEDDING,
     input: text,
-    encoding_format: 'float',
+    encoding_format: 'float'
   });
   return response.data[0].embedding;
 }
@@ -61,12 +61,16 @@ export async function retrieveEmbedding(
   config?: SearchConfig
 ): Promise<SimilarContentResult[]> {
   try {
+    const { project } = config || {};
     // 生成文本的 embedding
     const embedding = await createSingleEmbedding(text);
-    
+    let results: SimilarContentResult[] = [];
     // 使用 embedding 进行相似度检索
-    const results = await findSimilarContent(embedding, config);
-    
+    if (project === 'dasComps') {
+      results = await dasFindSimilarContent(embedding);
+    } else if (project === 'aasComps') {
+      results = await aasFindSimilarContent(embedding);
+    }
     return results;
   } catch (error) {
     console.error('Error searching similar content:', error);

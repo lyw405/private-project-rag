@@ -9,9 +9,9 @@ type MessageContent = {
 };
 
 type Message = {
-  id: string;
-  role: 'user' | 'assistant' | 'tool';
-  content: string | MessageContent[];
+  id?: string;
+  role?: 'user' | 'assistant' | 'tool';
+  content?: string | MessageContent[];
   ragDocs?: RAGDocument[];
 };
 

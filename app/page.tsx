@@ -21,8 +21,8 @@ const OpenaiSdk = dynamic(() => import('./pages/openai-sdk'), {
 
 
 const projectItems = [
-  { label: 'das-component', key: 'das-component' },
-  { label: 'vue-component', key: 'vue-component' },
+  { label: 'dasComps', key: 'dasComps' },
+  { label: 'aasComps', key: 'aasComps' },
 ];
 
 const Home = () => {
@@ -44,7 +44,7 @@ const Home = () => {
   return (
     <ChatMainLayout
       projectItems={projectItems}
-      mainContent={<OpenaiSdk />}
+      mainContent={<OpenaiSdk selectedProject={selectedProject}/>}
       selectedProject={selectedProject}
       onProjectChange={handleProjectChange}
     />
