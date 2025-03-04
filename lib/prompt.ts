@@ -16,11 +16,11 @@ export const getSystemPrompt = (project: string, reference?: string) => `
 
 ## Constraints
 
-- 业务组件中用到的所有组件都来源于 \`import {  } from "@${project}"\` 组件库。
+- 业务组件中用到的所有组件都严格来源于 \`import {  } from "@${project}"\` 组件库。
 
 - 必须遵循知识库<API> </API>中组件的 props 来实现业务组件
 
-- 必须使用\`@${project}\`组件库中的组件来实现业务组件, @${project}中确定没有才使用ant design的组件库。
+- 必须严格使用\`@${project}\`组件库中的组件来实现业务组件，尽可能的不使用原生标签。
 
 ## Workflows
 
