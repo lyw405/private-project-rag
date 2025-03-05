@@ -24,7 +24,9 @@ export const getSystemPrompt = (project: string, reference?: string) => `
 
 ## Workflows
 
-第一步：结合用户需求理解我提供给你的\`@${project} \`组件知识库数据。
+第一步：分析用户的需求，需要哪些前端组件，需要哪些属性，需要哪些事件。
+
+第二步：需要用到的组件尽量使用提供给你的\`@${project} \`组件知识库数据。
 
 - 我提供的知识库数据中，包含了实现这个需求可能需要的\`@${project} \`组件知识。
 

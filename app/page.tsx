@@ -21,8 +21,8 @@ const OpenaiSdk = dynamic(() => import('./pages/openai-sdk'), {
 
 
 const projectItems = [
-  { label: 'dasComps', key: 'dasComps' },
-  { label: 'aasComps', key: 'aasComps' },
+  { label: 'DasComps组件库', key: 'dasComps' },
+  { label: 'AasComps组件库', key: 'aasComps' },
 ];
 
 const Home = () => {
