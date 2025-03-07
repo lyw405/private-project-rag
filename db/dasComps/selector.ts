@@ -19,7 +19,7 @@ export async function findSimilarContent(
   embedding: number[],
   config?: SearchConfig
 ): Promise<SimilarContentResult[]> {
-  const { threshold = 0.7, limit = 10 } = config || {};
+  const { threshold = 0.7, limit = 15 } = config || {};
   
   const embeddingStr = `[${embedding.join(',')}]`;
   const similarityExpr = sql<number>`(1 - ('${sql.raw(embeddingStr)}'::vector <=> ${dasCompsEmbeddings.embedding}))::float`;
