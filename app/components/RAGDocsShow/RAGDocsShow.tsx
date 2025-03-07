@@ -6,7 +6,6 @@ const { Paragraph } = Typography;
 
 const RAGDocsShow: React.FC<RAGDocsShowProps> = ({ documents, trigger }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
-
   return (
     <>
       <div onClick={() => setIsModalOpen(true)}>{trigger}</div>
@@ -55,12 +54,12 @@ const RAGDocsShow: React.FC<RAGDocsShowProps> = ({ documents, trigger }) => {
                     >
                       {doc.content}
                     </Paragraph>
-                    {doc.score && (
+                    {doc.similarity && (
                       <Tag
                         color="blue"
                         className="ml-4 !h-[24px] !leading-[22px] flex items-center !bg-blue-50 !text-blue-700 !border-blue-100"
                       >
-                        {(doc.score * 100).toFixed(2)}%
+                        {(doc.similarity * 100).toFixed(2)}%
                       </Tag>
                     )}
                   </div>
