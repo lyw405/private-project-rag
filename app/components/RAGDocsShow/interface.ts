@@ -1,7 +1,7 @@
 interface RAGDocument {
   id: string;
   content: string;
-  score?: number;
+  similarity?: number;
 }
 
 interface RAGDocsShowProps {
