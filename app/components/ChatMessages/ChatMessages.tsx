@@ -36,7 +36,7 @@ const ChatMessages = forwardRef<{ scrollToBottom: () => void }, ChatMessagesProp
                   return (
                     <React.Fragment key={message.id}>
                       {message.role === 'user' ? (
-                        <UserMessage message={message.content} />
+                        <UserMessage message={message.content as string} />
                       ) : (
                         <React.Fragment>
                           {!isEmpty(message.content) && (
@@ -45,7 +45,7 @@ const ChatMessages = forwardRef<{ scrollToBottom: () => void }, ChatMessagesProp
                               ragDocs={message.ragDocs}
                               isLoading={isLoading && index === messages.length - 1}
                               onRetry={() => {
-                                onRetry?.(message.id);
+                                onRetry?.(message.id as string);
                               }}
                             />
                           )}
@@ -64,7 +64,7 @@ const ChatMessages = forwardRef<{ scrollToBottom: () => void }, ChatMessagesProp
                     handleInputChange({ target: { value: val } } as unknown as ChangeEvent<HTMLInputElement>);
                   }}
                   handleInputChange={(e) => handleInputChange(e as unknown as ChangeEvent<HTMLInputElement>)}
-                  prompts={['使用代码完成如图组件', '帮我画',]}
+                  prompts={['使用代码生成如图组件', '测试',]}
                   actions={useMemo(
                     () => [
                       <div className="flex items-center" key="draw a ui">
