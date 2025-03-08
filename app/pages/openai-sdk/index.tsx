@@ -5,6 +5,7 @@ import { nanoid } from 'nanoid';
 import ChatMessages from '@/app/components/ChatMessages/ChatMessages';
 import { ChatCompletionMessageParam } from 'openai/resources/chat/completions.mjs';
 import { Message } from '@/app/components/ChatMessages/interface';
+import { OpenAIRequest } from '@/app/api/openai/types';
 
 const Home = ({selectedProject}:{selectedProject:string}) => {
   const [messages, setMessages] = useState<Array<ChatCompletionMessageParam & { id: string }>>([]);
@@ -29,78 +30,106 @@ const Home = ({selectedProject}:{selectedProject:string}) => {
     setIsLoading(true);
 
     try {
+      setMessages(newMessages as Array<ChatCompletionMessageParam & { id: string }>);
+      setIsLoading(true);
+
       const response = await fetch('/api/openai', {
         method: 'POST',
         headers: {
-          'Content-Type': 'application/json',
+          'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           message: newMessages,
-          project: myRef.current,
-        }),
+          project: myRef.current
+        } as OpenAIRequest)
       });
 
-      if (!response.ok) {
-        throw new Error('API request failed');
-      }
-      setInput('');
-      const reader = response.body?.getReader();
-      if (!reader) return;
-
-      const decoder = new TextDecoder();
-      let assistantMessage = {
-        role: 'assistant' as const,
-        content: '',
-        id: nanoid(),
-        ragDocs: [],
-      };
-      
-      // 先将空的 assistant 消息添加到列表中
-      setMessages(prev => [...prev, assistantMessage]);
-
+      const reader = response?.body?.getReader();
+      const textDecoder = new TextDecoder();
+      let received_stream = '';
+      const id = nanoid();
       let buffer = '';
-      const sseDataRegex = /data: (.*?)\n\n/g;
 
       while (true) {
+        if (!reader) break;
         const { done, value } = await reader.read();
-        if (done) break;
 
-        const chunk = decoder.decode(value);
-        buffer += chunk;
-
-        // 使用正则表达式匹配完整的 SSE 消息
-        let match;
-        while ((match = sseDataRegex.exec(buffer)) !== null) {
-          const data = match[1];
-          if (data === '[DONE]') continue;
-
-          try {
-            const { content, references: ragDocs } = JSON.parse(data);
-            assistantMessage = {
-              ...assistantMessage,
-              content: assistantMessage.content + content,
-              ragDocs,
-            };
-
-            setMessages((prev) =>
-              prev.map((msg) =>
-                msg.id === assistantMessage.id ? assistantMessage : msg
-              )
-            );
-          } catch (e) {
-            console.error('Error parsing SSE message:', e);
-          }
+        if (done) {
+          break;
         }
 
-        // 清理已处理的数据
-        buffer = buffer.slice(buffer.lastIndexOf('\n\n') + 2);
+        // 将新的数据块添加到缓冲区
+        buffer += textDecoder.decode(value, { stream: true });
+
+        // 处理缓冲区中的所有完整消息
+        const messages = buffer.split('\n\n');
+        buffer = messages.pop() || ''; // 保留最后一个不完整的消息
+
+        for (const message of messages) {
+          if (!message.trim()) continue;
+
+          const lines = message.split('\n');
+          const dataLine = lines.find((line) => line.startsWith('data:'));
+
+          if (dataLine) {
+            const jsonData = dataLine.slice(5).trim();
+            try {
+              const { relevantContent,  aiResponse } = JSON.parse(jsonData) as {
+                relevantContent: Array<{ content: string; similarity: number }>;
+                aiResponse: string;
+              };
+              received_stream += aiResponse;
+              console.log(relevantContent);
+              setMessages((messages) => {
+                if (messages.find((message) => message.id === id)) {
+                  return messages.map((message) => {
+                    if (message.id === id) {
+                      return {
+                        ...message,
+                        content: received_stream,
+                        ragDocs: relevantContent.map(({ content, similarity }) => ({
+                          id: nanoid(),
+                          content: content,
+                          similarity
+                        }))
+                      };
+                    }
+                    return message;
+                  });
+                }
+                return [
+                  ...messages,
+                  {
+                    id,
+                    role: 'assistant',
+                    content: received_stream,
+                    ragDocs: relevantContent.map(({ content, similarity }) => ({
+                      id: nanoid(),
+                      content: content,
+                      similarity
+                    }))
+                  }
+                ];
+              });
+            } catch (e) {
+              console.error('Error parsing SSE data:', e);
+            }
+          }
+        }
       }
-    } catch (error) {
-      console.error('Error:', error);
-      // 在这里可以添加错误处理的UI提示
-    } finally {
-      setIsLoading(false);
+
+      setInput('');
       setMessageImgUrl('');
+      setIsLoading(false);
+    } catch (error) {
+      console.error(error);
+      setIsLoading(false);
+      // 如果最后一条消息是用户消息，则去掉最后一条消息
+      setMessages((messages) =>
+        messages.length > 0 && messages[messages.length - 1].role === 'user'
+          ? messages.slice(0, -1)
+          : messages
+      );
     }
   };
 

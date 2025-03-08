@@ -13,7 +13,7 @@ const openai = new OpenAI({
 export async function POST(req: Request) {
   try {
     const { message, project } = (await req.json()) as OpenAIRequest;
-
+   
     // 获取最后一条用户消息
     let userMessage = message[message.length - 1];
     if (userMessage?.role !== 'user') {
@@ -60,8 +60,8 @@ export async function POST(req: Request) {
             const content = chunk.choices[0]?.delta?.content || '';
             if (content) {
               const data = JSON.stringify({
-                content,
-                references: similarResults
+                aiResponse: content,
+                relevantContent: similarResults
               });
               controller.enqueue(`data: ${data}\n\n`);
             }
