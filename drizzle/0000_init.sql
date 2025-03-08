@@ -5,7 +5,7 @@ CREATE EXTENSION IF NOT EXISTS vector;
 CREATE TABLE IF NOT EXISTS "open_ai_embeddings" (
     "id" varchar(191) PRIMARY KEY,
     "content" text NOT NULL,
-    "embedding" vector(1536) NOT NULL
+    "embedding" vector(1024) NOT NULL
 );
 
 -- Create the HNSW index
