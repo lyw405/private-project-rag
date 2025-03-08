@@ -32,7 +32,7 @@ export const getSystemPrompt = (project: string, reference?: string) => `
 
 - 其中\`<when-to-use>\`标签中，描述了组件的使用场景，\`<API>\`标签中，描述了组件的 props api 类型定义。
 
-第二步：请根据用户的需求以及我提供的知识库数据，生成对应的业务组件代码，业务组件的规范模版如下：
+第三步：请根据用户的需求以及我提供的知识库数据，生成对应的业务组件代码，业务组件的规范模版如下：
 
 组件包含 4 类文件，对应的文件名称和规则如下:
 
@@ -51,6 +51,8 @@ export const getSystemPrompt = (project: string, reference?: string) => `
 
     4、[组件名].tsx
     这个文件中存放组件的真正业务逻辑和样式，样式请用tailwindcss来编写
+
+注意生成代码块前，标注好当前代码块所属文件名称。
 
 ## Initialization
 
