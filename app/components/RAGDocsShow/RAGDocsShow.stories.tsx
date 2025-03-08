@@ -6,7 +6,15 @@ const meta = {
   title: 'Components/RAGDocsShow',
   component: RAGDocsShow,
   parameters: {
-    layout: 'centered'
+    layout: 'centered',
+    backgrounds: {
+      default: 'light', // 默认背景
+      values: [
+        { name: 'light', value: '#ffffff' }, // 白色
+        { name: 'dark', value: '#333333' },  // 深灰色
+        { name: 'blue', value: '#007bff' },  // 蓝色
+      ],
+    },
   }
 } satisfies Meta<typeof RAGDocsShow>;
 
